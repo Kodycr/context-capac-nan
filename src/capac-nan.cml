@@ -1,0 +1,52 @@
+// Definición de Contexto Principal para Cinema Global 
+ContextMap CinemaGlobalContextMap { 
+
+    contains GestionReservas
+    contains GestionMantenimientodeinstalaciones
+    contains GestionPagos
+    contains GestionEmpleados
+    contains GestionUsuarios
+    contains GestionAutenticacionAutorizacion
+    contains GestionCamposDisponibles
+
+    /* Cooperación */ 
+
+    GestionMantenimientodeinstalaciones [P]<->[P] GestionEmpleados
+    // Relación de cooperación bidireccional: mantenimiento requiere empleados y viceversa.
+    
+    GestionUsuarios [P]<->[P] GestionReservas
+    // Los usuarios pueden hacer reservas, y las reservas deben verificar los datos de los usuarios.
+    
+    GestionCamposDisponibles [P]<->[P] GestionMantenimientodeinstalaciones
+    // Las disponibilidades de los campos dependen del mantenimiento, y el mantenimiento consulta las disponibilidades.
+
+    
+    /* Conformista */ 
+    
+    GestionUsuarios [CF]<-[PL] GestionAutenticacionAutorizacion
+    // Gestión de usuarios depende de autenticación y autorización para validar permisos.
+    
+    GestionReservas [U]-> [D, CF] GestionPagos
+    // Las reservas usan el subdominio de pagos y son conformistas a sus reglas.
+
+    
+    /* Open-Host Service */ 
+    
+    GestionCamposDisponibles [U, OHS]->[D] GestionReservas
+    // Las reservas consultan la disponibilidad de los campos como un servicio abierto.
+
+} 
+
+BoundedContext GestionReservas { } 
+
+BoundedContext GestionMantenimientodeinstalaciones { }
+
+BoundedContext GestionPagos { }
+
+BoundedContext GestionEmpleados { }
+
+BoundedContext GestionUsuarios { }
+
+BoundedContext GestionAutenticacionAutorizacion { }
+
+BoundedContext GestionCamposDisponibles { }
